@@ -36,7 +36,7 @@ export default function AppFunctional(props) {
   const [serverSuccess, setServerSuccess] = useState()
   const [serverFailure, setServerFailure] = useState()
 
-
+  const [buttonClick, setButtonClick] = useState(false)
 
 
   useEffect(() => {
@@ -66,7 +66,10 @@ export default function AppFunctional(props) {
   // } else if (position.y === 3) {
   //     return "You can't go down"
 
-  // }
+  
+  if(!setButtonClick){
+    return `You can't move ${direction}`
+  }
 
 }
 
@@ -90,7 +93,6 @@ export default function AppFunctional(props) {
       xValue = Math.min(xValue + 1, 3)
     }else if (direction === 'down'){
       yValue = Math.min(yValue + 1, 3)
-    
     }
     setPosition({x: xValue, y: yValue})
     setCount(count + 1)
@@ -101,7 +103,8 @@ export default function AppFunctional(props) {
   function reset() {
     setPosition({ x : 2 , y : 2})
     setCount(initialSteps)
-    
+    setServerSuccess('')
+    setValues({...values, email: initialEmail})
     // Use this helper to reset all states to their initial values.
    
   }
@@ -118,7 +121,8 @@ export default function AppFunctional(props) {
     axios.post('http://localhost:9000/api/result', values )
     .then(res =>{
       setServerSuccess(res.data.message)
-      setServerFailure()
+      setValues({email: initialEmail})
+      setButtonClick(false)
     })
     .catch(err => {
       setServerFailure(err.response.data.message)
@@ -157,7 +161,7 @@ export default function AppFunctional(props) {
         <button id="reset" onClick={reset}>reset</button>
       </div>
       <form onSubmit = {onSubmit}>
-        <input onChange={onChange}  id="email" type="email" placeholder="type email" ></input>
+        <input onChange={onChange} value = {values.email} id="email" type="email" placeholder="type email" ></input>
         <input id="submit" type="submit"></input>
       </form>
     </div>
