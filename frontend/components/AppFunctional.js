@@ -67,18 +67,20 @@ export default function AppFunctional(props) {
     let xValue = position.x
     let yValue = position.y 
     if (direction === 'left' && xValue === 1) {
-      setServerFailure("You can't move left");
+      setServerFailure("You can't move left")
     } else if (direction === 'up' && yValue === 1) {
-      setServerFailure("You can't move up");
+      setServerFailure("You can't move up")
     } else if (direction === 'right' && xValue === 3) {
-      setServerFailure("You can't move right");
+      setServerFailure("You can't move right")
     } else if (direction === 'down' && yValue === 3) {
-      setServerFailure("You can't move down");
+      setServerFailure("You can't move down")
     } else {
-      xValue += (direction === 'left' ? -1 : direction === 'right' ? 1 : 0);
-      yValue += (direction === 'up' ? -1 : direction === 'down' ? 1 : 0);
-      setPosition({ x: xValue, y: yValue });
-      setCount(count + 1);
+      xValue += (direction === 'left' ? -1 : direction === 'right' ? 1 : 0)
+      yValue += (direction === 'up' ? -1 : direction === 'down' ? 1 : 0)
+      setPosition({ x: xValue, y: yValue })
+      setCount(count + 1)
+      setServerSuccess('')
+      setServerFailure('')
     }
   
     // This event handler can use the helper above to obtain a new index for the "B",
@@ -90,7 +92,7 @@ export default function AppFunctional(props) {
     setCount(initialSteps)
     setServerSuccess('')
     setServerFailure('')
-    setValues({...values, email: initialEmail})
+    setValues(getInitialValues())
     // Use this helper to reset all states to their initial values.
    
   }
@@ -107,13 +109,15 @@ export default function AppFunctional(props) {
     axios.post('http://localhost:9000/api/result', values )
     .then(res =>{
       setServerSuccess(res.data.message)
-      console.log(res)
-      setValues({email: initialEmail})
+      setValues(getInitialValues())
+      //setValues({email: initialEmail})
     })
     .catch(err => {
-      setServerFailure(`You can't move ${err.request.responseURL.split('/').pop()}`)
-      setServerFailure('')
-      setServerSuccess()
+      if(serverFailure){
+      setServerFailure(`You can't move ${err.request.responseURL}`)
+      }else{
+      setServerSuccess('')
+      }
     })
     .finally(() => {
       setValues(getInitialValues())
@@ -137,7 +141,7 @@ export default function AppFunctional(props) {
         } 
       </div>
       <div className="info">
-        <h3 id="message"> {serverSuccess ? serverSuccess : serverFailure} </h3>
+        <h3 id="message"> {!serverSuccess ? serverFailure: serverSuccess} </h3>
         
       </div>
       <div id="keypad">
