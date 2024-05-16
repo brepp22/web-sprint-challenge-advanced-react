@@ -67,13 +67,13 @@ export default function AppFunctional(props) {
     let xValue = position.x
     let yValue = position.y 
     if (direction === 'left' && xValue === 1) {
-      setServerFailure("You can't move left")
+      setServerFailure("You can't go left")
     } else if (direction === 'up' && yValue === 1) {
-      setServerFailure("You can't move up")
+      setServerFailure("You can't go up")
     } else if (direction === 'right' && xValue === 3) {
-      setServerFailure("You can't move right")
+      setServerFailure("You can't go right")
     } else if (direction === 'down' && yValue === 3) {
-      setServerFailure("You can't move down")
+      setServerFailure("You can't go down")
     } else {
       xValue += (direction === 'left' ? -1 : direction === 'right' ? 1 : 0)
       yValue += (direction === 'up' ? -1 : direction === 'down' ? 1 : 0)
@@ -114,7 +114,7 @@ export default function AppFunctional(props) {
     })
     .catch(err => {
       if(serverFailure){
-      setServerFailure(`You can't move ${err.request.responseURL}`)
+      setServerFailure(`You can't go ${err.request.responseURL}`)
       }else{
       setServerSuccess('')
       }
