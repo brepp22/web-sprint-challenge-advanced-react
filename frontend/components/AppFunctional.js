@@ -122,7 +122,7 @@ export default function AppFunctional(props) {
         } 
       </div>
       <div className="info">
-        <h3 id="message">{serverSuccess ||serverFailure}</h3>
+        <h3 id="message">{serverSuccess||serverFailure}</h3>
         
       </div>
       <div id="keypad">
