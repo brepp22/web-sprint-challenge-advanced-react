@@ -8,18 +8,19 @@ const initialEmail = ''
 const initialSteps = 0
 const initialIndex = 4 // the index the "B" is at
 
-const userSchema = yup.object().shape({
-  x: yup.number().min(1).max(3).required(),
-  y: yup.number().min(1).max(3).required(),
-  steps: yup.number().required(),
-  email: yup.string().email().required()
-})
+// const userSchema = yup.object().shape({
+//   x: yup.number().min(1).max(3).required(),
+//   y: yup.number().min(1).max(3).required(),
+//   steps: yup.number().required(),
+//   email: yup.string().email().required()
+// })
 
 const getInitialValues = () => ({
   x: 2,
   y: 2, 
   steps: initialSteps,
   email: initialEmail,
+  message: initialMessage
 })
 
 
@@ -41,31 +42,13 @@ export default function AppFunctional(props) {
     setIndex(newIndex)
   }, [position])
 
- 
-  // function getXY() {
-    
-  
-  //   // It it not necessary to have a state to track the coordinates.
-  //   // It's enough to know what index the "B" is at, to be able to calculate them.
-  // }
-
-
-//   function getXYMessage() {
-//     // It it not necessary to have a state to track the "Coordinates (2, 2)" message for the user.
-//     // You can use the `getXY` helper above to obtain the coordinates, and then `getXYMessage`
-//     // returns the fully constructed string.
-
-// }
-
-  // function getNextIndex() {
-  //   // This helper takes a direction ("left", "up", etc) and calculates what the next index
-  //   // of the "B" would be. If the move is impossible because we are at the edge of the grid,
-  //   // this helper should return the current index unchanged.
-  // }
-
   function move(direction) {
+    setServerSuccess()
+    setServerFailure()
+
     let xValue = position.x
     let yValue = position.y 
+
     if (direction === 'left' && xValue === 1) {
       setServerFailure("You can't go left")
     } else if (direction === 'up' && yValue === 1) {
@@ -79,8 +62,6 @@ export default function AppFunctional(props) {
       yValue += (direction === 'up' ? -1 : direction === 'down' ? 1 : 0)
       setPosition({ x: xValue, y: yValue })
       setCount(count + 1)
-      setServerSuccess('')
-      setServerFailure('')
     }
   
     // This event handler can use the helper above to obtain a new index for the "B",
@@ -90,8 +71,8 @@ export default function AppFunctional(props) {
   function reset() {
     setPosition({ x : 2 , y : 2})
     setCount(initialSteps)
-    setServerSuccess('')
-    setServerFailure('')
+    setServerSuccess()
+    setServerFailure()
     setValues(getInitialValues())
     // Use this helper to reset all states to their initial values.
    
@@ -106,17 +87,17 @@ export default function AppFunctional(props) {
 
   function onSubmit(evt) {
     evt.preventDefault()
-    axios.post('http://localhost:9000/api/result', values )
+    axios.post('http://localhost:9000/api/result', values)
     .then(res =>{
       setServerSuccess(res.data.message)
       setValues(getInitialValues())
-      //setValues({email: initialEmail})
     })
     .catch(err => {
       if(serverFailure){
-      setServerFailure(`You can't go ${err.request.responseURL}`)
+      setServerFailure(err)
+      console.log(err.response.data.message)
       }else{
-      setServerSuccess('')
+      setServerSuccess()
       }
     })
     .finally(() => {
@@ -129,7 +110,7 @@ export default function AppFunctional(props) {
     <div id="wrapper" className={props.className}>
       <div className="info">
         <h3 id="coordinates">Coordinates ({position.x}, {position.y})</h3>
-        <h3 id="steps">You moved {count} times</h3>
+        <h3 id="steps">You moved {count} {count === 1 ? 'time' : 'times'}</h3>
       </div>
       <div id="grid">
         {
@@ -141,7 +122,7 @@ export default function AppFunctional(props) {
         } 
       </div>
       <div className="info">
-        <h3 id="message"> {!serverSuccess ? serverFailure: serverSuccess} </h3>
+        <h3 id="message">{serverSuccess ||serverFailure}</h3>
         
       </div>
       <div id="keypad">
