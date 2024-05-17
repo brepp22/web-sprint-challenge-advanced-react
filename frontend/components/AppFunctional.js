@@ -90,14 +90,15 @@ export default function AppFunctional(props) {
     axios.post('http://localhost:9000/api/result', values)
     .then(res =>{
       setServerSuccess(res.data.message)
-      setValues(getInitialValues())
+      console.log(res.data.message)
+      // setValues(getInitialValues())
     })
     .catch(err => {
-      if(serverFailure){
-      setServerFailure(err)
-      console.log(err.response.data.message)
+      if(serverFailure && err.response.status === 403){
+        setServerFailure(`${evt.target.value} failure #43`)
       }else{
-      setServerSuccess()
+        setServerFailure(`${err.response ? err.response.data.message : err.message}`)
+      console.log(err.response.data.message)
       }
     })
     .finally(() => {
