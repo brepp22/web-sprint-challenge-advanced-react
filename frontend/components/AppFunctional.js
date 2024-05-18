@@ -34,8 +34,7 @@ export default function AppFunctional(props) {
 
 
   
-  const [serverSuccess, setServerSuccess] = useState()
-  const [serverFailure, setServerFailure] = useState()
+ const[serverResponse, setServerResponse] = useState('')
 
   useEffect(() => {
     const newIndex = position.y * 3 + position.x - 4
@@ -43,20 +42,19 @@ export default function AppFunctional(props) {
   }, [position])
 
   function move(direction) {
-    setServerSuccess()
-    setServerFailure()
+    setServerResponse('')
 
     let xValue = position.x
     let yValue = position.y 
 
     if (direction === 'left' && xValue === 1) {
-      setServerFailure("You can't go left")
+      setServerResponse("You can't go left")
     } else if (direction === 'up' && yValue === 1) {
-      setServerFailure("You can't go up")
+      setServerResponse("You can't go up")
     } else if (direction === 'right' && xValue === 3) {
-      setServerFailure("You can't go right")
+      setServerResponse("You can't go right")
     } else if (direction === 'down' && yValue === 3) {
-      setServerFailure("You can't go down")
+      setServerResponse("You can't go down")
     } else {
       xValue += (direction === 'left' ? -1 : direction === 'right' ? 1 : 0)
       yValue += (direction === 'up' ? -1 : direction === 'down' ? 1 : 0)
@@ -71,8 +69,7 @@ export default function AppFunctional(props) {
   function reset() {
     setPosition({ x : 2 , y : 2})
     setCount(initialSteps)
-    setServerSuccess()
-    setServerFailure()
+    setServerResponse('')
     setValues(getInitialValues())
     // Use this helper to reset all states to their initial values.
    
@@ -87,18 +84,22 @@ export default function AppFunctional(props) {
 
   function onSubmit(evt) {
     evt.preventDefault()
+    if(!values.email){
+      setServerResponse("Ouch: email is required")
+      return
+    }
     axios.post('http://localhost:9000/api/result', values)
     .then(res =>{
-      setServerSuccess(res.data.message)
+      setServerResponse(res.data.message)
       console.log(res.data.message)
-      // setValues(getInitialValues())
+      setValues(getInitialValues())
     })
     .catch(err => {
-      if(serverFailure && err.response.status === 403){
-        setServerFailure(`${evt.target.value} failure #43`)
+      if(err.response && err.response.status === 403){
+        setServerResponse(err.response.data.message)
+        console.log(err.response)
       }else{
-        setServerFailure(`${err.response ? err.response.data.message : err.message}`)
-      console.log(err.response.data.message)
+        setServerResponse(err.response.data.message)
       }
     })
     .finally(() => {
@@ -123,7 +124,7 @@ export default function AppFunctional(props) {
         } 
       </div>
       <div className="info">
-        <h3 id="message">{serverSuccess||serverFailure}</h3>
+        <h3 id="message">{serverResponse}</h3>
         
       </div>
       <div id="keypad">
