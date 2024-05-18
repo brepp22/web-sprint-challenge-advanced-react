@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react'
-import * as yup from 'yup'
 import axios from 'axios'
 
 // Suggested initial states
@@ -7,13 +6,6 @@ const initialMessage = ''
 const initialEmail = ''
 const initialSteps = 0
 const initialIndex = 4 // the index the "B" is at
-
-// const userSchema = yup.object().shape({
-//   x: yup.number().min(1).max(3).required(),
-//   y: yup.number().min(1).max(3).required(),
-//   steps: yup.number().required(),
-//   email: yup.string().email().required()
-// })
 
 const getInitialValues = () => ({
   x: 2,
