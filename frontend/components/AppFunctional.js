@@ -80,16 +80,25 @@ export default function AppFunctional(props) {
       setServerResponse("Ouch: email is required")
       return
     }
-    axios.post('http://localhost:9000/api/result', values)
+
+    const updatedValues = {
+      ...values,
+      x: position.x,
+      y: position.y,
+      steps: count
+    }
+
+
+    axios.post('http://localhost:9000/api/result', updatedValues )
     .then(res =>{
       setServerResponse(res.data.message)
-      console.log(res.data.message)
+      console.log(res.data)
       setValues(getInitialValues())
     })
     .catch(err => {
       if(err.response && err.response.status === 403){
         setServerResponse(err.response.data.message)
-        console.log(err.response)
+        //console.log(err.response)
       }else{
         setServerResponse(err.response.data.message)
       }
